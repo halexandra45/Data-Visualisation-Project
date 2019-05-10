@@ -1,4 +1,4 @@
-# Data-Visualisation-Project
+# Data-Visualization-Project
 
 FEATURES
 - Connect to Neo4j instance to get live data
