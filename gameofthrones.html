@@ -1,0 +1,72 @@
+<!doctype html>
+<script src="https://rawgit.com/neo4j-contrib/neovis.js/master/dist/neovis.js"></script>
+<script src="https://d3js.org/d3.v4.0.0-alpha.40.min.js"></script>
+<script src="https://cdn.neo4jlabs.com/neovis.js/v1.0.0/neovis.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+<script src="gameof.js"></script>
+<link rel="stylesheet" href="gameof.css">
+<script
+src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+crossorigin="anonymous"></script>
+<html>
+<head>
+    <title>Neovis.js Game of Thrones</title>
+    <button onclick="refreshPage()" class="button_refresh">Refresh</button> 
+    <div class="container-checkboxes">
+            <ul class="ks-cboxtags">
+                <li><input type="checkbox" onchange="toggleCharacter('Robb-Stark')" id="checkboxOne" value="Robb-Stark" checked><label for="checkboxOne">Robb</label></li>
+                <li><input type="checkbox" onchange="toggleCharacter('Daenerys-Targaryen')" id="checkboxTwo" value="Daenerys-Targaryen" checked><label for="checkboxTwo">Daenerys</label></li>
+                <li><input type="checkbox" onchange="toggleCharacter('Cersei-Lannister')" id="checkboxThree" value="Cersei-Lannister" checked><label for="checkboxThree">Cersei</label></li>
+                <li><input type="checkbox" onchange="toggleCharacter('Jaime-Lannister')" id="checkboxFour" value="Jaime-Lannister" checked><label for="checkboxFour">Jaime</label></li>
+                <li><input type="checkbox" onchange="toggleCharacter('Eddard-Stark')" id="checkboxFive" value="Eddard-Stark" checked><label for="checkboxFive">Eddard</label></li>
+            </ul>  
+        </div> 
+</head>
+<body class= "body-style" onload="draw()">
+<div id="viz"></div>
+
+<div class="row">
+    <div style="display: inline-block;">
+        <h4 class="h4-style">Cypher query: </h4>
+        <textarea class="text-area" rows="4" cols=50 id="cypher"></textarea><br>
+        <input class="submit-btn" type="submit" value="Submit" id="reload">
+    </div>
+    <div style="display: inline-block;">
+        <h4 class="h4-style">Recommender system </h4>
+        <textarea class="text-area" placeholder="Enter name" rows="4" cols=50 id="input_name"></textarea><br>
+        <input class="submit-btn"  type="submit" value="Submit" id="recommend">
+    </div>
+</div>
+    
+</body>
+<script>
+      $("#recommend").click(function() {
+        var cypher = $("#input_name").val();
+        if (cypher.length > 3) {
+           const query = "MATCH (Robb:Character {name:" + JSON.stringify(cypher) + "})-[:INTERACTS]->(m)<-[r:INTERACTS]-(Character), (Character)-[p:INTERACTS]->(m2)<-[:INTERACTS]-(coCharacter) WHERE NOT (Robb)-[:INTERACTS]->()<-[:INTERACTS]-(coCharacter) AND Robb <> coCharacter return coCharacter.name AS Recommended, coCharacter, count(*) AS Strength ORDER BY Strength DESC LIMIT 20"
+            console.log(query);
+           viz.renderWithCypher(query)
+        } else {
+            console.log("reload");
+            viz.reload();
+        }
+    });
+
+    
+    $("#reload").click(function() {
+        var cypher = $("#cypher").val();
+        if (cypher.length > 3) {
+            viz.renderWithCypher(cypher);
+            data = 
+            viz.renderWithCypher(data);
+        } else {
+            console.log("reload");
+            viz.reload();
+        }
+    });
+    $("#stabilize").click(function() {
+        viz.stabilize();
+    })
+</script>
+</html>
